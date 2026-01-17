@@ -1,0 +1,52 @@
+site_name: book-flow-writer-agent
+repo_url: https://github.com/Avngrstark62/book-flow-writer-agent
+site_url: https://Avngrstark62.github.io/book-flow-writer-agent
+site_description: An orchestrated multi-crew Flow that outlines and generates a complete book by coordinating sequential content planning and chapter creation across specialized agents.
+site_author: Abhijeet Singh Thakur
+edit_uri: edit/main/docs/
+repo_name: Avngrstark62/book-flow-writer-agent
+copyright: Maintained by <a href="https://Avngrstark62.com">Avngrstark62</a>.
+
+nav:
+  - Home: index.md
+  - Modules: modules.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["src/book_flow_writer_agent"]
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Avngrstark62/book-flow-writer-agent
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/book-flow-writer-agent
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true

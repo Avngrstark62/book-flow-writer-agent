@@ -1,0 +1,389 @@
+# Book Flow Writer Agent Skill
+# AI-powered complete book creator combining research, outlining, writing and editing
+
+# Basic Metadata
+id: book-flow-writer-agent-v1
+name: book-flow-writer-agent
+version: 1.0.0
+author: thakurabhijeetsingh79@gmail.com
+
+# Description
+description: |
+  An AI-powered book writing assistant that creates complete books through multi-agent
+  collaboration. This skill enables comprehensive topic research, structured book
+  outlining, professional chapter writing, and quality content editing. It analyzes
+  topics, creates logical chapter progressions, and delivers polished, engaging books
+  that provide value to readers across various subjects.
+
+# Tags and Modes
+tags:
+  - book-writing
+  - content-creation
+  - ai-writing
+  - multi-agent
+  - research
+  - outlining
+  - chapter-writing
+  - content-editing
+  - creative-writing
+  - publishing
+
+input_modes:
+  - text/plain
+  - application/json
+
+output_modes:
+  - text/plain
+  - application/json
+  - text/markdown
+
+# Example Queries
+examples:
+  - "Write a book about The Future of Artificial Intelligence covering AI trends and applications"
+  - "Create a comprehensive book on Sustainable Living for modern families"
+  - "Generate a book about Machine Learning for beginners with practical examples"
+  - "Write a book on Personal Finance covering budgeting, investing, and wealth building"
+  - "Create a book about Modern Leadership in the digital age"
+
+# Detailed Capabilities
+capabilities_detail:
+  topic_research:
+    supported: true
+    analysis_types:
+      - topic_analysis
+      - key_themes_identification
+      - trend_research
+      - subtopic_discovery
+      - logical_flow_planning
+    outputs:
+      - research_insights
+      - topic_coverage
+      - content_structure
+
+  book_outlining:
+    supported: true
+    deliverables:
+      - chapter_structure
+      - content_organization
+      - logical_progression
+      - theme_distribution
+      - comprehensive_coverage
+    focus_areas:
+      - narrative_flow
+      - information_hierarchy
+      - reader_engagement
+      - topic_depth
+      - chapter_balance
+
+  chapter_writing:
+    supported: true
+    content_types:
+      - chapter_introductions
+      - main_content_sections
+      - examples_and_explanations
+      - engaging_narratives
+      - chapter_conclusions
+      - transitions
+    features:
+      - engaging_tone
+      - topic_focused
+      - reader_friendly
+      - well_structured
+      - comprehensive_coverage
+
+  content_editing:
+    supported: true
+    components:
+      - clarity_enhancement
+      - grammatical_refinement
+      - flow_optimization
+      - consistency_check
+      - engagement_improvement
+    criteria:
+      - readability_scores
+      - professional_standards
+      - coherence_check
+      - goal_alignment
+
+# Requirements
+requirements:
+  packages:
+    - crewai>=0.152.0
+    - bindu>=2026.1.7
+    - openai>=1.60.0
+    - python-dotenv>=1.0.1
+  system: []
+  min_memory_mb: 512
+  external_services:
+    - OpenAI API or OpenRouter API
+
+# Performance Metrics
+performance:
+  avg_processing_time_ms: 45000
+  avg_time_per_chapter_ms: 8000
+  max_concurrent_requests: 2
+  memory_per_request_mb: 512
+  timeout_seconds: 300
+  agents_count: 4
+  scalability: horizontal
+
+# Tool Restrictions
+allowed_tools:
+  - CrewAI
+  - TopicResearch
+  - BookOutlining
+  - ChapterWriting
+  - ContentEditing
+  - Read
+  - Analyze
+  - Generate
+  - Write
+
+# Rich Documentation
+documentation:
+  overview: |
+    This agent specializes in complete book creation using a multi-crew flow system.
+    It orchestrates research analysts, book outliners, chapter writers, and content
+    editors to create comprehensive, engaging books on any topic.
+
+    The agent excels at understanding complex topics, creating logical chapter
+    structures, crafting compelling content, and ensuring professional quality
+    throughout the entire book. It uses a two-crew system: one for outlining
+    and one for chapter writing.
+
+  use_cases:
+    when_to_use:
+      - User needs a complete book on a specific topic
+      - User wants to create structured educational content
+      - User requests comprehensive guides or handbooks
+      - User needs multi-chapter content with consistent quality
+      - User wants professionally written and edited books
+      - User asks for topic-focused long-form content
+      - User needs books with logical flow and structure
+
+    when_not_to_use:
+      - Simple article or blog post generation (use content writer)
+      - Resume or CV writing (use CV agent)
+      - Single chapter or short content (use basic text generation)
+      - Technical documentation (use documentation tools)
+      - Marketing copy or ads (use copywriting agent)
+      - Fiction or creative storytelling (use creative writing tools)
+      - Academic research papers (use academic writing tools)
+
+  input_structure: |
+    Accepts book requests with topic and goals:
+
+    {
+      "input": "Title: [Book Title]\nTopic: [Main topic]\nGoal: [Book goals]",
+      "title": "The title of the book",
+      "topic": "Main subject or topic of the book",
+      "goal": "What the book should accomplish for readers"
+    }
+
+    Query constraints:
+    - Max input length: 1000 characters
+    - Processing time: ~45-300 seconds
+    - Language: English primary
+    - Context depth: Brief to detailed
+
+  output_format: |
+    Complete Book in Markdown:
+    {
+      "success": true,
+      "book": {
+        "title": "Book Title",
+        "chapters": [
+          {
+            "number": 1,
+            "title": "Chapter title...",
+            "content": "Full chapter content in markdown..."
+          }
+        ],
+        "word_count": 15000,
+        "chapter_count": 5
+      },
+      "metadata": {
+        "processing_time_ms": 48000,
+        "agents_used": 4,
+        "outline_generation_ms": 12000,
+        "total_chapters": 5
+      }
+    }
+
+    Or as direct markdown output:
+    # Book Title
+
+    ---
+
+    ## Chapter 1: Introduction
+    Content...
+
+    ---
+
+    ## Chapter 2: Core Concepts
+    Content...
+
+  error_handling:
+    - "Insufficient information: Requests more details about topic or goals"
+    - "API errors: Returns partial results with error details"
+    - "Timeout: Returns completed chapters with indication of incomplete work"
+    - "Missing required fields: Uses defaults and notifies user"
+    - "Vague topic: Infers from context or requests clarification"
+    - "Chapter generation errors: Returns placeholder chapters and continues"
+
+  examples:
+    - title: "AI Book Creation"
+      input:
+        title: "The Future of Artificial Intelligence"
+        topic: "AI trends, applications, and future developments in 2026"
+        goal: "Provide readers with comprehensive understanding of current AI trends and prepare them for future innovations"
+      output:
+        success: true
+        book:
+          title: "The Future of Artificial Intelligence"
+          chapter_count: 7
+          word_count: 18500
+          chapters:
+            - number: 1
+              title: "Introduction to Modern AI"
+              content: "Full chapter content..."
+            - number: 2
+              title: "Current AI Trends and Applications"
+              content: "Full chapter content..."
+        metadata:
+          processing_time_ms: 52000
+          agents_used: 4
+
+    - title: "Sustainable Living Book"
+      input:
+        title: "Green Living for Modern Families"
+        topic: "Sustainable practices, eco-friendly choices, and environmental consciousness"
+        goal: "Help families adopt sustainable living practices in their daily lives"
+      output:
+        success: true
+        book:
+          title: "Green Living for Modern Families"
+          chapter_count: 6
+          word_count: 16000
+        metadata:
+          processing_time_ms: 47000
+
+    - title: "Machine Learning Guide"
+      input:
+        title: "Machine Learning Fundamentals"
+        topic: "Introduction to ML concepts, algorithms, and practical applications"
+        goal: "Make machine learning accessible to beginners with clear explanations and examples"
+      output:
+        success: true
+        book:
+          chapter_count: 8
+          word_count: 22000
+        metadata:
+          processing_time_ms: 61000
+
+  best_practices:
+    for_developers:
+      - "Provide clear book titles, topics, and goals for best results"
+      - "Specify the scope and depth level for appropriate content generation"
+      - "Include target audience information for better tone alignment"
+      - "Use specific topics rather than overly broad subjects"
+      - "Monitor processing time and implement timeout handling (300s recommended)"
+      - "Review generated content for topic-specific accuracy"
+
+    for_orchestrators:
+      - "Route book writing and long-form content requests to this agent"
+      - "Chain with editing or publishing tools for final production"
+      - "Consider query complexity for timeout settings (45-300s typical)"
+      - "Use with fact-checking tools for accuracy verification"
+      - "Implement fallback to chapter-by-chapter generation for time-sensitive needs"
+      - "Monitor token usage as multi-crew workflows consume significant resources"
+      - "Combine with formatting tools for final book layout"
+
+  installation: |
+    Required packages:
+    pip install crewai bindu openai python-dotenv
+
+    Environment variables:
+    OPENAI_API_KEY=your_openai_api_key
+    OPENROUTER_API_KEY=your_openrouter_api_key  # Alternative to OpenAI
+    MODEL_NAME=openai/gpt-4o  # Optional, defaults to gpt-4o
+
+    For CrewAI multi-agent orchestration:
+    # No additional system dependencies required
+    # Uses CrewAI framework for multi-crew coordination
+
+  versioning:
+    - version: "1.0.0"
+      date: "2026-01-17"
+      changes: "Initial release with 4-agent system: researcher, outliner, writer, editor"
+    - version: "1.1.0"
+      status: "planned"
+      changes: "Add support for multiple writing styles and tones"
+    - version: "1.2.0"
+      status: "planned"
+      changes: "Multi-language support and genre-specific templates"
+
+# Assessment fields for skill negotiation
+assessment:
+  keywords:
+    - book-writing
+    - write-book
+    - create-book
+    - book-creation
+    - content-writing
+    - long-form-content
+    - chapter-writing
+    - book-outline
+    - book-author
+    - comprehensive-guide
+    - handbook
+    - manual
+    - ebook
+    - publication
+    - manuscript
+
+  specializations:
+    - domain: non_fiction
+      confidence_boost: 0.3
+    - domain: educational_content
+      confidence_boost: 0.3
+    - domain: how_to_guides
+      confidence_boost: 0.3
+    - domain: technical_topics
+      confidence_boost: 0.2
+    - domain: business_books
+      confidence_boost: 0.2
+
+  anti_patterns:
+    - "blog post"
+    - "article writing"
+    - "social media"
+    - "tweet"
+    - "email"
+    - "resume"
+    - "cover letter"
+    - "fiction story"
+    - "novel writing"
+    - "poem"
+    - "script"
+    - "research paper"
+    - "thesis"
+
+  complexity_indicators:
+    simple:
+      - "short book"
+      - "quick guide"
+      - "basic handbook"
+      - "simple topic"
+    medium:
+      - "complete book"
+      - "comprehensive guide"
+      - "multi-chapter content"
+      - "specific topic"
+      - "structured content"
+    complex:
+      - "detailed book"
+      - "extensive coverage"
+      - "technical subject"
+      - "multiple topics"
+      - "professional publication"
