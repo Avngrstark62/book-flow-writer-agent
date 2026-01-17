@@ -38,17 +38,20 @@ _init_lock = asyncio.Lock()
 # Pydantic models for book structure
 class ChapterOutline(BaseModel):
     """Outline for a single chapter."""
+
     title: str
     description: str
 
 
 class BookOutline(BaseModel):
     """Complete book outline."""
+
     chapters: list[ChapterOutline]
 
 
 class Chapter(BaseModel):
     """Complete chapter with content."""
+
     title: str
     content: str
 
@@ -385,56 +388,45 @@ async def initialize_crew() -> None:
     await initialize_chapter_crew()
 
 
+def _parse_chapter_from_lines(lines: list[str]) -> list[ChapterOutline]:
+    """Parse chapter outlines from text lines."""
+    chapters = []
+    current_title = None
+    current_desc = []
+
+    for line in lines:
+        line = line.strip()
+        if line.startswith("#") or (line and not line.startswith("-") and not current_title):
+            if current_title and current_desc:
+                chapters.append(ChapterOutline(title=current_title, description=" ".join(current_desc)))
+            current_title = line.strip("#").strip()
+            current_desc = []
+        elif line and current_title:
+            current_desc.append(line)
+
+    if current_title and current_desc:
+        chapters.append(ChapterOutline(title=current_title, description=" ".join(current_desc)))
+
+    return chapters
+
+
 def extract_chapters_from_outline(result: Any) -> list[ChapterOutline]:
     """Extract chapter outlines from CrewAI result."""
-    result_str = str(result)
-    
     # Try to parse as structured output
-    if hasattr(result, "pydantic") and result.pydantic:
-        if isinstance(result.pydantic, BookOutline):
-            return result.pydantic.chapters
-    
+    if hasattr(result, "pydantic") and result.pydantic and isinstance(result.pydantic, BookOutline):
+        return result.pydantic.chapters
+
     # Try to extract from tasks_output
     if hasattr(result, "tasks_output") and result.tasks_output:
         for output in result.tasks_output:
             output_str = str(output)
-            # Try to find chapter structure in the output
-            # This is a simple parser - you may need to adjust based on actual output
-            chapters = []
-            lines = output_str.split('\n')
-            current_title = None
-            current_desc = []
-            
-            for line in lines:
-                line = line.strip()
-                if line.startswith('#') or (line and not line.startswith('-') and not current_title):
-                    if current_title and current_desc:
-                        chapters.append(ChapterOutline(
-                            title=current_title,
-                            description=' '.join(current_desc)
-                        ))
-                    current_title = line.strip('#').strip()
-                    current_desc = []
-                elif line and current_title:
-                    current_desc.append(line)
-            
-            if current_title and current_desc:
-                chapters.append(ChapterOutline(
-                    title=current_title,
-                    description=' '.join(current_desc)
-                ))
-            
+            lines = output_str.split("\n")
+            chapters = _parse_chapter_from_lines(lines)
             if chapters:
                 return chapters
-    
+
     # Fallback: create a simple outline
-    return [
-        ChapterOutline(
-            title=f"Chapter {i+1}",
-            description=f"Content for chapter {i+1}"
-        )
-        for i in range(5)
-    ]
+    return [ChapterOutline(title=f"Chapter {i + 1}", description=f"Content for chapter {i + 1}") for i in range(5)]
 
 
 async def run_outline_crew(topic: str, goal: str) -> list[ChapterOutline]:
@@ -486,18 +478,17 @@ async def run_chapter_crew(chapter_outline: ChapterOutline, topic: str, goal: st
         traceback.print_exc()
         # Return a placeholder chapter on error
         return Chapter(
-            title=chapter_outline.title,
-            content=f"# {chapter_outline.title}\n\n{chapter_outline.description}"
+            title=chapter_outline.title, content=f"# {chapter_outline.title}\n\n{chapter_outline.description}"
         )
 
     # Extract chapter content from result
     result_str = str(result)
-    
+
     # Clean up the content
     content = result_str.strip()
     if content.startswith("```"):
         content = re.sub(r"^```\w*\n?|\n?```$", "", content, flags=re.MULTILINE)
-    
+
     return Chapter(title=chapter_outline.title, content=content)
 
 
@@ -505,12 +496,12 @@ def combine_chapters_to_book(chapters: list[Chapter], title: str) -> str:
     """Combine all chapters into a single book markdown."""
     book_content = f"# {title}\n\n"
     book_content += "---\n\n"
-    
+
     for i, chapter in enumerate(chapters, 1):
         book_content += f"\n## Chapter {i}: {chapter.title}\n\n"
         book_content += chapter.content
         book_content += "\n\n---\n\n"
-    
+
     return book_content
 
 
@@ -530,16 +521,16 @@ async def write_complete_book(topic: str, goal: str, title: str) -> str:
 
     # Step 1: Generate outline
     chapter_outlines = await run_outline_crew(topic, goal)
-    
+
     # Step 2: Write all chapters
     chapters = []
     for outline in chapter_outlines:
         chapter = await run_chapter_crew(outline, topic, goal)
         chapters.append(chapter)
-    
+
     # Step 3: Combine into complete book
     book_content = combine_chapters_to_book(chapters, title)
-    
+
     print(f"✅ Book writing complete! Total length: {len(book_content)} characters")
     return book_content
 
@@ -557,14 +548,14 @@ def _extract_user_input(messages: list[dict[str, str]]) -> str:
 def _parse_book_request(user_input: str) -> dict[str, str]:
     """Parse user input to extract book details."""
     # Simple parser - you can make this more sophisticated
-    lines = user_input.split('\n')
-    
+    lines = user_input.split("\n")
+
     result = {
         "title": "Untitled Book",
         "topic": user_input[:200],  # Default to first 200 chars
-        "goal": "Create an informative and engaging book on the specified topic."
+        "goal": "Create an informative and engaging book on the specified topic.",
     }
-    
+
     for line in lines:
         line = line.strip()
         if line.lower().startswith("title:"):
@@ -573,7 +564,7 @@ def _parse_book_request(user_input: str) -> dict[str, str]:
             result["topic"] = line.split(":", 1)[1].strip()
         elif line.lower().startswith("goal:"):
             result["goal"] = line.split(":", 1)[1].strip()
-    
+
     return result
 
 
@@ -609,11 +600,9 @@ async def run_agent(messages: list[dict[str, str]]) -> AgentResponse:
     # Generate complete book
     try:
         book_content = await write_complete_book(
-            topic=book_request["topic"],
-            goal=book_request["goal"],
-            title=book_request["title"]
+            topic=book_request["topic"], goal=book_request["goal"], title=book_request["title"]
         )
-        
+
         if book_content and len(book_content) > 500:
             return AgentResponse(
                 run_id=f"run-{id(messages)}",
